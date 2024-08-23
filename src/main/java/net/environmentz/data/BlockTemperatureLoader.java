@@ -26,7 +26,7 @@ public class BlockTemperatureLoader implements SimpleSynchronousResourceReloadLi
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier("environmentz", "block_temperature_loader");
+        return Identifier.of("environmentz", "block_temperature_loader");
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BlockTemperatureLoader implements SimpleSynchronousResourceReloadLi
                     if (replaceList.contains(keyString)) {
                         continue;
                     }
-                    Identifier identifier = new Identifier(keyString);
+                    Identifier identifier = Identifier.of(keyString);
                     if (Registries.BLOCK.get(identifier).toString().equals("Block{minecraft:air}") && Registries.FLUID.get(identifier).toString().contains("net.minecraft.fluid.EmptyFluid")) {
                         EnvironmentzMain.LOGGER.info("{} is not a valid block or fluid identifier", identifier);
                         continue;

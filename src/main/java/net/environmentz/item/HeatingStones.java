@@ -13,12 +13,13 @@ public class HeatingStones extends Item {
     }
 
     @Override
-    public void onCraft(ItemStack stack, World world, PlayerEntity player) {
-        if (!world.isClient && player.currentScreenHandler instanceof StonecutterScreenHandler)
+    public void onCraftByPlayer(ItemStack stack, World world, PlayerEntity player) {
+        if (!world.isClient && player.currentScreenHandler instanceof StonecutterScreenHandler) {
             stack.setDamage(stack.getMaxDamage() - 1);
-
-        super.onCraft(stack, world, player);
+        }
+        super.onCraftByPlayer(stack, world, player);
     }
+
 
     @Override
     public boolean isEnchantable(ItemStack stack) {

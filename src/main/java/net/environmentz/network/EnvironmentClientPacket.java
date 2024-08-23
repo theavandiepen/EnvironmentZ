@@ -1,6 +1,10 @@
 package net.environmentz.network;
 
 import net.environmentz.access.TemperatureManagerAccess;
+import net.environmentz.network.packet.AffectionPacket;
+import net.environmentz.network.packet.SyncValuesPacket;
+import net.environmentz.network.packet.TemperaturePacket;
+import net.environmentz.network.packet.ThermometerPacket;
 import net.environmentz.temperature.TemperatureManager;
 import net.environmentz.temperature.Temperatures;
 import net.fabricmc.api.EnvType;
@@ -11,52 +15,51 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 public class EnvironmentClientPacket {
 
     public static void init() {
-        ClientPlayNetworking.registerGlobalReceiver(EnvironmentServerPacket.SYNC_ENV_AFFECTED, (client, handler, buffer, responseSender) -> {
-            boolean isHotAffected = buffer.readBoolean();
-            boolean isColdAffected = buffer.readBoolean();
-            client.execute(() -> {
-                TemperatureManager temperatureManager = ((TemperatureManagerAccess) client.player).getTemperatureManager();
-
+        ClientPlayNetworking.registerGlobalReceiver(AffectionPacket.PACKET_ID, (payload, context) -> {
+            boolean isHotAffected = payload.heatAffected();
+            boolean isColdAffected = payload.coldAffected();
+            context.client().execute(() -> {
+                TemperatureManager temperatureManager = ((TemperatureManagerAccess) context.player()).getTemperatureManager();
                 temperatureManager.setEnvironmentAffection(isHotAffected, isColdAffected);
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(EnvironmentServerPacket.TEMPERATURE_UPDATE, (client, handler, buffer, responseSender) -> {
-            int temperature = buffer.readInt();
-            int wetness = buffer.readInt();
-            client.execute(() -> {
-                TemperatureManager temperatureManager = ((TemperatureManagerAccess) client.player).getTemperatureManager();
+        ClientPlayNetworking.registerGlobalReceiver(TemperaturePacket.PACKET_ID, (payload, context) -> {
+            int temperature = payload.temperature();
+            int wetness = payload.wetness();
+            context.client().execute(() -> {
+                TemperatureManager temperatureManager = ((TemperatureManagerAccess)  context.player()).getTemperatureManager();
 
                 temperatureManager.setPlayerTemperature(temperature);
                 temperatureManager.setPlayerWetIntensityValue(wetness);
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(EnvironmentServerPacket.THERMOMETER_UPDATE, (client, handler, buffer, responseSender) -> {
-            int temperature = buffer.readInt();
-            client.execute(() -> {
-                TemperatureManager temperatureManager = ((TemperatureManagerAccess) client.player).getTemperatureManager();
+        ClientPlayNetworking.registerGlobalReceiver(ThermometerPacket.PACKET_ID, (payload, context) -> {
+            int temperature = payload.temperature();
+            context.client().execute(() -> {
+                TemperatureManager temperatureManager = ((TemperatureManagerAccess)  context.player()).getTemperatureManager();
                 temperatureManager.setThermometerTemperature(temperature);
             });
         });
-        ClientPlayNetworking.registerGlobalReceiver(EnvironmentServerPacket.SYNC_VALUES, (client, handler, buffer, responseSender) -> {
-            int max_very_cold = buffer.readInt();
-            int max_cold = buffer.readInt();
-            int min_cold = buffer.readInt();
-            int normal = buffer.readInt();
-            int min_hot = buffer.readInt();
-            int max_hot = buffer.readInt();
-            int max_very_hot = buffer.readInt();
+        ClientPlayNetworking.registerGlobalReceiver(SyncValuesPacket.PACKET_ID, (payload, context) -> {
+            int max_very_cold = payload.max_very_cold();
+            int max_cold = payload.max_cold();
+            int min_cold = payload.min_cold();
+            int normal = payload.normal();
+            int min_hot = payload.min_hot();
+            int max_hot = payload.max_hot();
+            int max_very_hot = payload.max_very_hot();
 
-            int wetness_max = buffer.readInt();
-            int wetness_soaked = buffer.readInt();
-            int wetness_water = buffer.readInt();
-            int wetness_rain = buffer.readInt();
-            int wetness_dry = buffer.readInt();
+            int wetness_max = payload.wetness_max();
+            int wetness_soaked = payload.wetness_soaked();
+            int wetness_water = payload.wetness_water();
+            int wetness_rain = payload.wetness_rain();
+            int wetness_dry = payload.wetness_dry();
 
-            int very_cold = buffer.readInt();
-            int cold = buffer.readInt();
-            int hot = buffer.readInt();
-            int very_hot = buffer.readInt();
-            client.execute(() -> {
+            int very_cold = payload.very_cold();
+            int cold = payload.cold();
+            int hot = payload.hot();
+            int very_hot = payload.very_hot();
+            context.client().execute(() -> {
                 Temperatures.setBodyTemperatures(max_very_cold, max_cold, min_cold, normal, min_hot, max_hot, max_very_hot);
                 Temperatures.setBodyWetness(wetness_max, wetness_soaked, wetness_water, wetness_rain, wetness_dry);
                 Temperatures.setThermometerTemperatures(very_cold, cold, hot, very_hot);

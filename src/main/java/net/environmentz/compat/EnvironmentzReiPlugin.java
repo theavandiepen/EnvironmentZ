@@ -12,7 +12,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
@@ -29,21 +28,17 @@ public class EnvironmentzReiPlugin implements REIClientPlugin {
 
     private static void addRecipe(DisplayRegistry registry, Item item) {
         ItemStack itemStack = new ItemStack(item);
-        Identifier recipeIdentifier = new Identifier(Registries.ITEM.getId(item).getPath() + "_fur_insolated");
+        Identifier recipeIdentifier = Identifier.of(Registries.ITEM.getId(item).getPath() + "_fur_insolated");
 
         if (registry.getRecipeManager().get(recipeIdentifier).isEmpty()) {
             if (!itemStack.isIn(TagInit.WARM_ARMOR)) {
                 ItemStack itemStack2 = itemStack.copy();
-                NbtCompound nbt = itemStack2.getOrCreateNbt();
-                nbt.putString("environmentz", "fur_insolated");
-                itemStack2.setNbt(nbt);
+                itemStack2.set(ItemInit.INSULATED,true);
                 registry.add(new AnvilRecipe(recipeIdentifier, List.of(itemStack), List.of(new ItemStack(ItemInit.POLAR_BEAR_FUR_ITEM)), List.of(itemStack2)));
 
                 itemStack2 = itemStack.copy();
-                nbt = itemStack2.getOrCreateNbt();
-                nbt.putInt("iced", ItemInit.COOLING_HEATING_VALUE);
-                itemStack2.setNbt(nbt);
-                registry.add(new AnvilRecipe(new Identifier(Registries.ITEM.getId(item).getPath() + "_cooled"), List.of(itemStack), List.of(new ItemStack(Items.ICE)), List.of(itemStack2)));
+                itemStack2.set(ItemInit.ICED,ItemInit.COOLING_HEATING_VALUE);
+                registry.add(new AnvilRecipe(Identifier.of(Registries.ITEM.getId(item).getPath() + "_cooled"), List.of(itemStack), List.of(new ItemStack(Items.ICE)), List.of(itemStack2)));
             }
         }
     }

@@ -9,7 +9,7 @@ import net.minecraft.util.Identifier;
 
 public class Temperatures {
 
-    public static final Identifier OVERWORLD = new Identifier("minecraft:overworld");
+    public static final Identifier OVERWORLD = Identifier.of("minecraft:overworld");
 
     // body temperature
     private static int body_temperature_max_very_cold;
@@ -132,7 +132,7 @@ public class Temperatures {
     }
 
     public static void setAcclimatizationTemperatures(int hot_body_temperature, int hot_body, int very_hot_body_temperature, int very_hot_body, int cold_body_temperature, int cold_body,
-            int very_cold_body_temperature, int very_cold_body) {
+                                                      int very_cold_body_temperature, int very_cold_body) {
         hot_body_acclimatization_temperature = hot_body_temperature;
         hot_body_acclimatization = hot_body;
         very_hot_body_acclimatization_temperature = very_hot_body_temperature;
@@ -241,7 +241,7 @@ public class Temperatures {
     }
 
     public static void setDimensionHeightTemperatures(Identifier dimensionIdentifier, int very_low, int low, int high, int very_high, int very_low_height, int low_height, int high_height,
-            int very_high_height) {
+                                                      int very_high_height) {
         HashMap<Integer, Integer> hashMap = new HashMap<Integer, Integer>();
         hashMap.put(0, very_low);
         hashMap.put(1, low);
@@ -281,108 +281,108 @@ public class Temperatures {
     // Getters
     public static int getBodyTemperatures(int environmentCode) { // environmentCode 0: max_very_cold, 1: max_cold, 2: min_cold, 3: normal, 4: min_hot, 5: max_hot, 6: max_very_hot
         switch (environmentCode) {
-        case 0:
-            return body_temperature_max_very_cold;
-        case 1:
-            return body_temperature_max_cold;
-        case 2:
-            return body_temperature_min_cold;
-        case 3:
-            return body_temperature_normal;
-        case 4:
-            return body_temperature_min_hot;
-        case 5:
-            return body_temperature_max_hot;
-        case 6:
-            return body_temperature_max_very_hot;
+            case 0:
+                return body_temperature_max_very_cold;
+            case 1:
+                return body_temperature_max_cold;
+            case 2:
+                return body_temperature_min_cold;
+            case 3:
+                return body_temperature_normal;
+            case 4:
+                return body_temperature_min_hot;
+            case 5:
+                return body_temperature_max_hot;
+            case 6:
+                return body_temperature_max_very_hot;
 
-        default:
-            return 0;
+            default:
+                return 0;
         }
     }
 
     public static int getBodyWetness(int code) { // code 0: wetness_max, 1: wetness_soaked 2: wetness_water, 3: wetness_rain 4: wetness_dry
         switch (code) {
-        case 0:
-            return body_wetness_max;
-        case 1:
-            return body_wetness_soaked;
-        case 2:
-            return body_wetness_water;
-        case 3:
-            return body_wetness_rain;
-        case 4:
-            return body_wetness_dry;
-        default:
-            return 0;
+            case 0:
+                return body_wetness_max;
+            case 1:
+                return body_wetness_soaked;
+            case 2:
+                return body_wetness_water;
+            case 3:
+                return body_wetness_rain;
+            case 4:
+                return body_wetness_dry;
+            default:
+                return 0;
         }
     }
 
     public static int getBodyProtection(int code) { // code 0: max_heat, 1: max_cold 2: max_heat_resistance, 3: max_cold_resistance
         switch (code) {
-        case 0:
-            return body_heat_protection;
-        case 1:
-            return body_cold_protection;
-        case 2:
-            return body_heat_resistance;
-        case 3:
-            return body_cold_resistance;
-        default:
-            return 0;
+            case 0:
+                return body_heat_protection;
+            case 1:
+                return body_cold_protection;
+            case 2:
+                return body_heat_resistance;
+            case 3:
+                return body_cold_resistance;
+            default:
+                return 0;
         }
     }
 
     public static float getBiomeTemperatures(int environmentCode) { // environmentCode 0:very_cold 1: cold, 2: hot, 3: very_hot
         switch (environmentCode) {
-        case 0:
-            return biome_temperature_very_cold;
-        case 1:
-            return biome_temperature_cold;
-        case 2:
-            return biome_temperature_hot;
-        case 3:
-            return biome_temperature_very_hot;
-        default:
-            return 0;
+            case 0:
+                return biome_temperature_very_cold;
+            case 1:
+                return biome_temperature_cold;
+            case 2:
+                return biome_temperature_hot;
+            case 3:
+                return biome_temperature_very_hot;
+            default:
+                return 0;
         }
     }
 
     public static int getThermometerTemperatures(int environmentCode) { // environmentCode 0:very_cold 1: cold, 2: hot, 3: very_hot
         switch (environmentCode) {
-        case 0:
-            return thermometer_very_cold;
-        case 1:
-            return thermometer_cold;
-        case 2:
-            return thermometer_hot;
-        case 3:
-            return thermometer_very_hot;
-        default:
-            return 0;
+            case 0:
+                return thermometer_very_cold;
+            case 1:
+                return thermometer_cold;
+            case 2:
+                return thermometer_hot;
+            case 3:
+                return thermometer_very_hot;
+            default:
+                return 0;
         }
     }
 
     public static int getAcclimatization(int code) { // code 0: hot temperature 1: hot acclimatization, 2: very_hot, 3: very_hot, 4: cold, 5: cold, 6: very_cold, 7: very_cold
         switch (code) {
-        case 0:
-            return hot_body_acclimatization_temperature;
-        case 1:
-            return hot_body_acclimatization;
-        case 2:
-            return very_hot_body_acclimatization_temperature;
-        case 3:
-            return very_hot_body_acclimatization;
-        case 4:
-            return cold_body_acclimatization_temperature;
-        case 5:
-            return cold_body_acclimatization;
-        case 6:
-            return very_cold_body_acclimatization_temperature;
-        case 7:
-            return very_cold_body_acclimatization;
-        default:
-            return 0;
+            case 0:
+                return hot_body_acclimatization_temperature;
+            case 1:
+                return hot_body_acclimatization;
+            case 2:
+                return very_hot_body_acclimatization_temperature;
+            case 3:
+                return very_hot_body_acclimatization;
+            case 4:
+                return cold_body_acclimatization_temperature;
+            case 5:
+                return cold_body_acclimatization;
+            case 6:
+                return very_cold_body_acclimatization_temperature;
+            case 7:
+                return very_cold_body_acclimatization;
+            default:
+                return 0;
         }
     }
 

@@ -4,18 +4,20 @@ import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.environmentz.effect.*;
 
 public class EffectInit {
-    public final static StatusEffect WARMING = new WarmEffect(StatusEffectCategory.BENEFICIAL, 16771455);
-    public final static StatusEffect COOLING = new CoolEffect(StatusEffectCategory.BENEFICIAL, 6541055);
-    public final static StatusEffect COMFORT = new ComfortEffect(StatusEffectCategory.BENEFICIAL, 0xE8732D);
+    public final static RegistryEntry<StatusEffect> WARMING = register("environmentz:warming", new WarmEffect(StatusEffectCategory.BENEFICIAL, 16771455));
+    public final static RegistryEntry<StatusEffect> COOLING = register("environmentz:cooling",new CoolEffect(StatusEffectCategory.BENEFICIAL, 6541055));
+    public final static RegistryEntry<StatusEffect> COMFORT = register("environmentz:comfort",new ComfortEffect(StatusEffectCategory.BENEFICIAL, 0xE8732D));
 
     public static void init() {
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("environmentz", "warming"), WARMING);
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("environmentz", "cooling"), COOLING);
-        Registry.register(Registries.STATUS_EFFECT, new Identifier("environmentz", "comfort"), COMFORT);
+    }
+
+    private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {
+        return Registry.registerReference(Registries.STATUS_EFFECT, Identifier.of(id), statusEffect);
     }
 
 }

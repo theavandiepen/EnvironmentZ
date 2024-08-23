@@ -1,9 +1,6 @@
 package net.environmentz.init;
 
-import ladysnake.satin.api.event.ShaderEffectRenderCallback;
-import ladysnake.satin.api.managed.ManagedShaderEffect;
-import ladysnake.satin.api.managed.ShaderEffectManager;
-import ladysnake.satin.api.managed.uniform.Uniform1f;
+
 import net.environmentz.entity.model.WolfHelmetModel;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -11,15 +8,21 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.item.DyeableItem;
+import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
+import org.ladysnake.satin.api.event.ShaderEffectRenderCallback;
+import org.ladysnake.satin.api.managed.ManagedShaderEffect;
+import org.ladysnake.satin.api.managed.ShaderEffectManager;
+import org.ladysnake.satin.api.managed.uniform.Uniform1f;
 
 @Environment(EnvType.CLIENT)
 public class RenderInit {
 
-    public static final EntityModelLayer WOLF_HELMET_LAYER = new EntityModelLayer(new Identifier("environmentz:wolf_helmet_render_layer"), "wolf_helmet_render_layer");
+    public static final EntityModelLayer WOLF_HELMET_LAYER = new EntityModelLayer(Identifier.of("environmentz:wolf_helmet_render_layer"), "wolf_helmet_render_layer");
 
-    private static final ManagedShaderEffect blurringEffect = ShaderEffectManager.getInstance().manage(new Identifier("environmentz", "shaders/post/blurring.json"),
+    private static final ManagedShaderEffect blurringEffect = ShaderEffectManager.getInstance().manage(Identifier.of("environmentz", "shaders/post/blurring.json"),
             shader -> shader.setUniformValue("Radius", (float) 8f));
     private static final Uniform1f blurProgress = blurringEffect.findUniform1f("Progress");
     private static float blurProgressValue = 0.0F;
@@ -37,7 +40,7 @@ public class RenderInit {
             });
         }
 
-        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : ((DyeableItem) stack.getItem()).getColor(stack), ItemInit.WANDERER_HELMET, ItemInit.WANDERER_CHESTPLATE,
+        ColorProviderRegistry.ITEM.register((stack, tintIndex) -> tintIndex > 0 ? -1 : DyedColorComponent.getColor(stack, 0xffe3c88e), ItemInit.WANDERER_HELMET, ItemInit.WANDERER_CHESTPLATE,
                 ItemInit.WANDERER_LEGGINGS, ItemInit.WANDERER_BOOTS);
     }
 

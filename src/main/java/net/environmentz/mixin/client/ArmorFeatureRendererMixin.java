@@ -2,7 +2,11 @@ package net.environmentz.mixin.client;
 
 import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
+import net.environmentz.init.ItemInit;
+import net.minecraft.component.type.DyedColorComponent;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.ColorHelper;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -23,6 +27,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ArmorFeatureRenderer.class)
 public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extends BipedEntityModel<T>, A extends BipedEntityModel<T>> extends FeatureRenderer<T, M> {
@@ -45,6 +50,18 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         }
     }
 
+    @Inject(method = "renderArmor", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/item/ItemStack;isIn(Lnet/minecraft/registry/tag/TagKey;)Z"), locals = LocalCapture.CAPTURE_FAILSOFT, cancellable = true)
+    private void renderArmorMixin(MatrixStack matrices, VertexConsumerProvider vertexConsumers, T entity, EquipmentSlot armorSlot, int light, A model, CallbackInfo info, ItemStack itemStack, ArmorItem armorItem, boolean bl, ArmorMaterial armorMaterial) {
+        if (bl && armorSlot.equals(EquipmentSlot.LEGS) && itemStack.isOf(ItemInit.WANDERER_LEGGINGS)) {
+            int j = ColorHelper.Argb.fullAlpha(DyedColorComponent.getColor(itemStack, -6265536));
+            this.renderArmorParts(matrices, vertexConsumers, light, model, j, armorMaterial.layers().getFirst().getTexture(!bl));
+            if (itemStack.hasGlint()) {
+                this.renderGlint(matrices, vertexConsumers, light, model);
+            }
+            info.cancel();
+        }
+    }
+
     @Inject(method = "usesInnerModel", at = @At("HEAD"), cancellable = true)
     private void usesInnerModelMixin(EquipmentSlot slot, CallbackInfoReturnable<Boolean> info) {
         if (this.livingEntity != null && this.livingEntity.getEquippedStack(slot).isIn(TagInit.SLIM_ARMOR)) {
@@ -52,12 +69,10 @@ public abstract class ArmorFeatureRendererMixin<T extends LivingEntity, M extend
         }
     }
 
-    @Inject(method = "getArmorTexture", at = @At("HEAD"), cancellable = true)
-    private void getArmorTextureMixin(ArmorItem item, boolean secondLayer, @Nullable String overlay, CallbackInfoReturnable<Identifier> info) {
-        if (secondLayer && overlay == null && item.getSlotType() == EquipmentSlot.LEGS && item.getDefaultStack().isIn(TagInit.SLIM_ARMOR)) {
-            String string = "textures/models/armor/" + item.getMaterial().getName() + "_layer_" + 2 + "_legs.png";
-            info.setReturnValue(ARMOR_TEXTURE_CACHE.computeIfAbsent(string, Identifier::new));
-        }
-    }
+    @Shadow
+    abstract void renderGlint(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model);
+
+    @Shadow
+    protected abstract void renderArmorParts(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, A model, int i, Identifier identifier);
 
 }

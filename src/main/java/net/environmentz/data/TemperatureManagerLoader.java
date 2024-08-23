@@ -25,7 +25,7 @@ public class TemperatureManagerLoader implements SimpleSynchronousResourceReload
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier("environmentz", "temperature_manager_loader");
+        return Identifier.of("environmentz", "temperature_manager_loader");
     }
 
     @Override
@@ -132,7 +132,7 @@ public class TemperatureManagerLoader implements SimpleSynchronousResourceReload
                                         if (JsonHelper.getBoolean(jsonObject, "replace", false)) {
                                             replaceList.add(keyString);
                                         }
-                                        Identifier effectIdentifier = new Identifier(keyString);
+                                        Identifier effectIdentifier = Identifier.of(keyString);
                                         if (Registries.STATUS_EFFECT.get(effectIdentifier) == null) {
                                             EnvironmentzMain.LOGGER.info("{} is not a valid effect identifier", effectIdentifier);
                                             continue;
@@ -175,7 +175,7 @@ public class TemperatureManagerLoader implements SimpleSynchronousResourceReload
                             if (JsonHelper.getBoolean(jsonObject, "replace", false)) {
                                 replaceList.add(keyString);
                             }
-                            Identifier dimensionIdentifier = new Identifier(keyString);
+                            Identifier dimensionIdentifier = Identifier.of(keyString);
 
                             if (JsonHelper.getBoolean(jsonObject, "basic", false)) {
                                 if (jsonObject.has("standard")) {

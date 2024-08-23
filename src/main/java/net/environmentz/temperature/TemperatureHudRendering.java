@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class TemperatureHudRendering {
 
-    private static final Identifier INDICATOR_ICON = new Identifier("environmentz:textures/gui/indicator_icon.png");
+    private static final Identifier INDICATOR_ICON = Identifier.of("environmentz:textures/gui/indicator_icon.png");
 
     public static void renderPlayerTemperatureIcon(DrawContext context, MinecraftClient client, PlayerEntity playerEntity, boolean heat, int xValue, int yValue, int extra, int intensity,
             int scaledWidth, int scaledHeight) {

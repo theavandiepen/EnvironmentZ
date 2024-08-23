@@ -3,17 +3,17 @@
   "pattern": [
     "a a",
     "aba",
-    "aaa"
+    "bbb"
   ],
   "key": {
     "a": {
-      "item": "minecraft:paper"
+      "item": "minecraft:leather"
     },
     "b": {
-      "item": "minecraft:string"
+      "item": "environmentz:wolf_pelt"
     }
   },
   "result": {
-    "item": "environmentz:wanderer_chestplate"
+    "id": "environmentz:wolf_chestplate"
   }
 }

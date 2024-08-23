@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- Fixed satin crash
-### Changed:
 - 
+### Changed:
+- Updated to mc 1.21

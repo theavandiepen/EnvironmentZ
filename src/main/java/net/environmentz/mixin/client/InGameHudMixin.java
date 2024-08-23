@@ -1,9 +1,7 @@
 package net.environmentz.mixin.client;
 
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import net.minecraft.client.render.RenderTickCounter;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -30,21 +28,27 @@ public abstract class InGameHudMixin {
     @Mutable
     private final MinecraftClient client;
 
+    @Unique
     private int xEnvPosition;
+    @Unique
     private int yEnvPosition;
+    @Unique
     private int extraEnvPosition;
+    @Unique
     private int envIntensity;
+    @Unique
     private boolean heat;
-
+    @Unique
     private int thermometerXPosition = 80;
+    @Unique
     private int thermometerYPosition = 11;
 
     public InGameHudMixin(MinecraftClient client) {
         this.client = client;
     }
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(FLnet/minecraft/client/gui/DrawContext;)V"))
-    private void renderMixin(DrawContext context, float f, CallbackInfo info) {
+    @Inject(method = "renderMainHud", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHotbar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"))
+    private void renderMainHudMixin(DrawContext context, RenderTickCounter tickCounter, CallbackInfo info) {
         // Gets ticked 60 times per second
         PlayerEntity playerEntity = client.player;
         TemperatureManager temperatureManager = ((TemperatureManagerAccess) playerEntity).getTemperatureManager();

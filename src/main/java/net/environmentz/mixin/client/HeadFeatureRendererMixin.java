@@ -26,6 +26,9 @@ import net.minecraft.client.render.item.ItemRenderer;
 @Environment(EnvType.CLIENT)
 @Mixin(HeadFeatureRenderer.class)
 public class HeadFeatureRendererMixin {
+
+    private static final Identifier WOLF_HELMET = Identifier.of("environmentz", "textures/entity/wolf_helmet.png");
+
     @Shadow
     @Final
     private float scaleX;
@@ -41,7 +44,7 @@ public class HeadFeatureRendererMixin {
     @SuppressWarnings("rawtypes")
     @Inject(method = "render", at = @At("HEAD"), cancellable = true)
     public void render(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, LivingEntity livingEntity, float f, float g, float h, float j, float k, float l,
-            CallbackInfo info) {
+                       CallbackInfo info) {
         ItemStack itemStack = livingEntity.getEquippedStack(EquipmentSlot.HEAD);
         if (!itemStack.isEmpty() && (itemStack.getItem() == ItemInit.WOLF_HELMET)) {
             matrixStack.push();
@@ -49,9 +52,9 @@ public class HeadFeatureRendererMixin {
             ((ModelWithHead) ((HeadFeatureRenderer) (Object) this).getContextModel()).getHead().rotate(matrixStack);
             matrixStack.translate(0.0D, -1.75D, 0.0D);
             matrixStack.scale(1.18F, 1.18F, 1.18F);
-            VertexConsumer vertexConsumer = ItemRenderer.getItemGlintConsumer(vertexConsumerProvider, this.wolfHelmetModel.getLayer(new Identifier("environmentz", "textures/entity/wolf_helmet.png")),
+            VertexConsumer vertexConsumer = ItemRenderer.getItemGlintConsumer(vertexConsumerProvider, this.wolfHelmetModel.getLayer(WOLF_HELMET),
                     false, itemStack.hasGlint());
-            this.wolfHelmetModel.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV, 1.0F, 1.0F, 1.0F, 1.0F);
+            this.wolfHelmetModel.render(matrixStack, vertexConsumer, i, OverlayTexture.DEFAULT_UV);
             matrixStack.pop();
             info.cancel();
         }

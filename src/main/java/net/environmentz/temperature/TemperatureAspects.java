@@ -8,12 +8,15 @@ import java.util.UUID;
 
 import net.dehydration.access.ThirstManagerAccess;
 import net.environmentz.init.ConfigInit;
+import net.environmentz.init.ItemInit;
 import net.environmentz.init.TagInit;
 import net.environmentz.mixin.access.EntityAccessor;
 import net.environmentz.network.EnvironmentServerPacket;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -21,6 +24,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
@@ -37,23 +41,25 @@ public class TemperatureAspects {
 
     private static final boolean isDehydrationLoaded = FabricLoader.getInstance().isModLoaded("dehydration");
 
-    private static final EntityAttributeModifier FREEZING_DEBUFF = new EntityAttributeModifier(UUID.fromString("92a0771a-744c-4bb9-b813-4c1048c80bb2"), "Freezing debuff", -0.25,
-            EntityAttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityAttributeModifier OVERHEATING_DEBUFF = new EntityAttributeModifier(UUID.fromString("852ecc8c-8f4b-4c98-912b-a79a1e4e0abe"), "Overheating debuff", -0.3,
-            EntityAttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityAttributeModifier COLD_DEBUFF = new EntityAttributeModifier(UUID.fromString("08898afc-5de5-4152-947f-98a5fc1cedb8"), "Cold debuff", -0.08,
-            EntityAttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityAttributeModifier HOT_DEBUFF = new EntityAttributeModifier(UUID.fromString("a5491cad-174c-4e41-a481-87ce0df45998"), "Hot debuff", -0.12,
-            EntityAttributeModifier.Operation.MULTIPLY_BASE);
-    private static final EntityAttributeModifier GENERAL_DEBUFF = new EntityAttributeModifier(UUID.fromString("13552c59-835e-4cc8-b09b-306bbe4ee786"), "General debuff", -0.2,
-            EntityAttributeModifier.Operation.MULTIPLY_BASE);
 
-    public static final RegistryKey<DamageType> FREEZING = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("environmentz", "freezing"));
+    private static final Identifier FREEZING = Identifier.of("environmentz:freezing_debuff");
+    private static final Identifier OVERHEATING = Identifier.of("environmentz:overheating_debuff");
+    private static final Identifier COLD = Identifier.of("environmentz:cold_debuff");
+    private static final Identifier HOT = Identifier.of("environmentz:hot_debuff");
+    private static final Identifier GENERAL = Identifier.of("environmentz:general_debuff");
 
-    /*
-     * b16b275c-4bd4-400c-9c91-e1e6e8f86edb b154bd6d-8b9a-4f43-92d8-64d837a05f87 3b1997c0-8902-40e7-a96c-be40777e4a52 a8dad3e1-7d16-4e37-9e7b-213dee8c53f6 2e930d17-7080-4859-bda3-e8671cd2a023
-     * 115b965d-8210-4965-8966-d7860e04d056 347bca75-d9a3-4ce1-88d8-4f28fc9b02dc 1627d656-7b8d-46bb-80d5-0cb28a759024 7c8137f1-c385-4ce7-90be-12ba5ef72caa
-     */
+    private static final EntityAttributeModifier FREEZING_DEBUFF = new EntityAttributeModifier(FREEZING, -0.25,
+            EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    private static final EntityAttributeModifier OVERHEATING_DEBUFF = new EntityAttributeModifier(OVERHEATING, -0.3,
+            EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    private static final EntityAttributeModifier COLD_DEBUFF = new EntityAttributeModifier(COLD, -0.08,
+            EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    private static final EntityAttributeModifier HOT_DEBUFF = new EntityAttributeModifier(HOT, -0.12,
+            EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+    private static final EntityAttributeModifier GENERAL_DEBUFF = new EntityAttributeModifier(GENERAL, -0.2,
+            EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE);
+
+    public static final RegistryKey<DamageType> FREEZING_DAMAGE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Identifier.of("environmentz", "freezing"));
 
     public static void tickPlayerEnvironment(TemperatureManager temperatureManager, PlayerEntity playerEntity, int environmentTickCount) {
         int calculatingTemperature = 0;
@@ -408,54 +414,54 @@ public class TemperatureAspects {
             EntityAttributeInstance entityStrengthAttributeInstance = playerEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE);
             EntityAttributeInstance entityAttackSpeedAttributeInstance = playerEntity.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_SPEED);
             if (playerTemperature > Temperatures.getBodyTemperatures(2) && playerTemperature < Temperatures.getBodyTemperatures(4)) {
-                if (entitySpeedAttributeInstance.hasModifier(COLD_DEBUFF))
+                if (entitySpeedAttributeInstance.hasModifier(COLD))
                     entitySpeedAttributeInstance.removeModifier(COLD_DEBUFF);
 
-                if (entityStrengthAttributeInstance.hasModifier(HOT_DEBUFF))
+                if (entityStrengthAttributeInstance.hasModifier(HOT))
                     entityStrengthAttributeInstance.removeModifier(HOT_DEBUFF);
 
             } else if (playerTemperature <= Temperatures.getBodyTemperatures(2)) {
                 if (playerTemperature <= Temperatures.getBodyTemperatures(1)) {
-                    if (!entitySpeedAttributeInstance.hasModifier(FREEZING_DEBUFF)) {
+                    if (!entitySpeedAttributeInstance.hasModifier(FREEZING)) {
                         entitySpeedAttributeInstance.addTemporaryModifier(FREEZING_DEBUFF);
-                        if (!entityAttackSpeedAttributeInstance.hasModifier(GENERAL_DEBUFF))
+                        if (!entityAttackSpeedAttributeInstance.hasModifier(GENERAL))
                             entityAttackSpeedAttributeInstance.addTemporaryModifier(GENERAL_DEBUFF);
                     }
-                    if (entitySpeedAttributeInstance.hasModifier(COLD_DEBUFF))
+                    if (entitySpeedAttributeInstance.hasModifier(COLD))
                         entitySpeedAttributeInstance.removeModifier(COLD_DEBUFF);
                 } else {
-                    if (!entitySpeedAttributeInstance.hasModifier(COLD_DEBUFF)) {
+                    if (!entitySpeedAttributeInstance.hasModifier(COLD)) {
                         entitySpeedAttributeInstance.addTemporaryModifier(COLD_DEBUFF);
                     }
-                    if (entitySpeedAttributeInstance.hasModifier(FREEZING_DEBUFF)) {
+                    if (entitySpeedAttributeInstance.hasModifier(FREEZING)) {
                         entitySpeedAttributeInstance.removeModifier(FREEZING_DEBUFF);
-                        if (entityAttackSpeedAttributeInstance.hasModifier(GENERAL_DEBUFF))
+                        if (entityAttackSpeedAttributeInstance.hasModifier(GENERAL))
                             entityAttackSpeedAttributeInstance.removeModifier(GENERAL_DEBUFF);
                     }
                 }
             } else if (playerTemperature >= Temperatures.getBodyTemperatures(4)) {
                 if (playerTemperature >= Temperatures.getBodyTemperatures(5)) {
-                    if (!entityStrengthAttributeInstance.hasModifier(OVERHEATING_DEBUFF)) {
+                    if (!entityStrengthAttributeInstance.hasModifier(OVERHEATING)) {
                         entityStrengthAttributeInstance.addTemporaryModifier(OVERHEATING_DEBUFF);
-                        if (!entityAttackSpeedAttributeInstance.hasModifier(GENERAL_DEBUFF))
+                        if (!entityAttackSpeedAttributeInstance.hasModifier(GENERAL))
                             entityAttackSpeedAttributeInstance.addTemporaryModifier(GENERAL_DEBUFF);
                     }
-                    if (entityStrengthAttributeInstance.hasModifier(HOT_DEBUFF))
+                    if (entityStrengthAttributeInstance.hasModifier(HOT))
                         entityStrengthAttributeInstance.removeModifier(HOT_DEBUFF);
                 } else {
-                    if (!entityStrengthAttributeInstance.hasModifier(HOT_DEBUFF))
+                    if (!entityStrengthAttributeInstance.hasModifier(HOT))
                         entityStrengthAttributeInstance.addTemporaryModifier(HOT_DEBUFF);
-                    if (entityStrengthAttributeInstance.hasModifier(OVERHEATING_DEBUFF)) {
+                    if (entityStrengthAttributeInstance.hasModifier(OVERHEATING)) {
                         entityStrengthAttributeInstance.removeModifier(OVERHEATING_DEBUFF);
-                        if (entityAttackSpeedAttributeInstance.hasModifier(GENERAL_DEBUFF))
+                        if (entityAttackSpeedAttributeInstance.hasModifier(GENERAL))
                             entityAttackSpeedAttributeInstance.removeModifier(GENERAL_DEBUFF);
                     }
                 }
             }
 
             if (ConfigInit.CONFIG.printInConsole) {
-                debugString += " Cold Debuff: " + entitySpeedAttributeInstance.hasModifier(COLD_DEBUFF);
-                debugString += " Hot Debuff: " + entitySpeedAttributeInstance.hasModifier(HOT_DEBUFF);
+                debugString += " Cold Debuff: " + entitySpeedAttributeInstance.hasModifier(COLD);
+                debugString += " Hot Debuff: " + entitySpeedAttributeInstance.hasModifier(HOT);
             }
         }
 
@@ -487,18 +493,18 @@ public class TemperatureAspects {
             ItemStack stack = playerEntity.getInventory().armor.get(i);
             if (!stack.isEmpty()) {
                 if (!stack.isIn(TagInit.NON_AFFECTING_ARMOR)) {
-                    if ((stack.hasNbt() && stack.getNbt().contains("environmentz")) || stack.isIn(TagInit.WARM_ARMOR)) {
+                    if ((stack.get(ItemInit.INSULATED) != null && stack.get(ItemInit.INSULATED)) || stack.isIn(TagInit.WARM_ARMOR)) {
                         returnValue += Temperatures.getDimensionInsulatedArmorTemperatures(dimensionIdentifier, environmentCode);
                     } else {
                         returnValue += Temperatures.getDimensionArmorTemperatures(dimensionIdentifier, environmentCode);
                     }
                 }
-                if (!stack.isIn(TagInit.WARM_ARMOR) && stack.hasNbt() && stack.getNbt().contains("iced")) {
+                if (!stack.isIn(TagInit.WARM_ARMOR) && stack.get(ItemInit.ICED) != null) {
                     returnValue += Temperatures.getDimensionIcedArmorTemperatures(dimensionIdentifier, environmentCode);
-                    int iced = stack.getNbt().getInt("iced") - 1;
-                    stack.getNbt().putInt("iced", iced);
+                    int iced = stack.get(ItemInit.ICED) - 1;
+                    stack.set(ItemInit.ICED,iced);
                     if (iced <= 0) {
-                        stack.getNbt().remove("iced");
+                        stack.remove(ItemInit.ICED);
                     }
                 }
             }
@@ -545,25 +551,23 @@ public class TemperatureAspects {
     private static int itemTemperature(PlayerEntity playerEntity, TemperatureManager temperatureManager) {
         int returnValue = 0;
         List<ItemStack> stacks = new ArrayList<ItemStack>();
-        playerEntity.getItemsEquipped().forEach((stack) -> {
-            stacks.add(stack);
-        });
+        playerEntity.getEquippedItems().forEach(stacks::add);
 
-        for (int i = 0; i < stacks.size(); i++) {
-            if (stacks.get(i).isEmpty()) {
+        for (ItemStack stack : stacks) {
+            if (stack.isEmpty()) {
                 continue;
             }
-            int itemId = Registries.ITEM.getRawId(stacks.get(i).getItem());
+            int itemId = Registries.ITEM.getRawId(stack.getItem());
             if (Temperatures.hasItemTemperature(itemId)) {
                 if (Temperatures.getItemValue(itemId, -1) != 0) {
-                    if (stacks.get(i).isDamageable() && !stacks.get(i).isIn(TagInit.ARMOR_ITEMS)) {
-                        if (stacks.get(i).getMaxDamage() - stacks.get(i).getDamage() > 1) {
+                    if (stack.isDamageable() && !stack.isIn(TagInit.ARMOR_ITEMS)) {
+                        if (stack.getMaxDamage() - stack.getDamage() > 1) {
                             if (!playerEntity.isCreative()) {
                                 int damage = Temperatures.getItemValue(itemId, -1);
-                                if (stacks.get(i).getMaxDamage() - stacks.get(i).getDamage() - damage <= 0) {
-                                    stacks.get(i).setDamage(0);
+                                if (stack.getMaxDamage() - stack.getDamage() - damage <= 0) {
+                                    stack.setDamage(0);
                                 } else {
-                                    stacks.get(i).damage(damage, playerEntity, (p) -> p.sendToolBreakStatus(p.getActiveHand()));
+                                    stack.damage(damage,playerEntity, LivingEntity.getSlotForHand(playerEntity.getActiveHand()));
                                 }
                             }
                         } else
@@ -594,7 +598,7 @@ public class TemperatureAspects {
         int returnValue = 0;
         Iterator<StatusEffectInstance> iterator = playerEntity.getStatusEffects().iterator();
         if (iterator.hasNext()) {
-            Identifier identifier = Registries.STATUS_EFFECT.getId(iterator.next().getEffectType());
+            Identifier identifier = Registries.STATUS_EFFECT.getId(iterator.next().getEffectType().value());
             if (Temperatures.hasEffectTemperature(identifier)) {
                 int effectValue = Temperatures.getEffectValue(identifier, 0);
                 if ((temperatureManager.getPlayerTemperature() < Temperatures.getBodyTemperatures(3) && effectValue > 0)
@@ -621,7 +625,7 @@ public class TemperatureAspects {
     }
 
     private static DamageSource createDamageSource(Entity entity) {
-        return entity.getDamageSources().create(FREEZING);
+        return entity.getDamageSources().create(FREEZING_DAMAGE);
     }
 
 }

@@ -1,19 +1,19 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "a a",
     "aba",
-    "bbb"
+    "a a",
+    "a a"
   ],
   "key": {
     "a": {
-      "item": "minecraft:leather"
+      "item": "minecraft:paper"
     },
     "b": {
-      "item": "environmentz:wolf_pelt"
+      "item": "minecraft:string"
     }
   },
   "result": {
-    "item": "environmentz:wolf_chestplate"
+    "id": "environmentz:wanderer_leggings"
   }
 }

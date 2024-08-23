@@ -16,7 +16,8 @@ public class PowderSnowBlockMixin {
 
     @Inject(method = "canWalkOnPowderSnow", at = @At("HEAD"), cancellable = true)
     private static void canWalkOnPowderSnowMixin(Entity entity, CallbackInfoReturnable<Boolean> info) {
-        if (entity instanceof LivingEntity && ((LivingEntity) entity).getEquippedStack(EquipmentSlot.FEET).isOf(ItemInit.WOLF_BOOTS))
+        if (entity instanceof LivingEntity && ((LivingEntity) entity).getEquippedStack(EquipmentSlot.FEET).isOf(ItemInit.WOLF_BOOTS)) {
             info.setReturnValue(true);
+        }
     }
 }

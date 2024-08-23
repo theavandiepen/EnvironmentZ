@@ -9,20 +9,20 @@ import net.minecraft.util.Identifier;
 public class ModelProviderInit {
 
     public static void init() {
-        ModelPredicateProviderRegistry.register(ItemInit.HEATING_STONES_ITEM, new Identifier("heated"), (stack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(ItemInit.HEATING_STONES_ITEM, Identifier.of("heated"), (stack, world, entity, seed) -> {
             if (entity == null)
                 return 0.0F;
             else
                 return stack.getMaxDamage() - stack.getDamage() > 1 ? 1.0F : 0.0F;
         });
-        ModelPredicateProviderRegistry.register(ItemInit.ICE_PACK_ITEM, new Identifier("melting"), (stack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(ItemInit.ICE_PACK_ITEM, Identifier.of("melting"), (stack, world, entity, seed) -> {
             if (entity == null)
                 return 0.0F;
             else
                 return stack.getDamage() == 0 ? 0.0F : 1.0F;
         });
 
-        ModelPredicateProviderRegistry.register(ItemInit.ICE_PACK_ITEM, new Identifier("melt"), (stack, world, entity, seed) -> {
+        ModelPredicateProviderRegistry.register(ItemInit.ICE_PACK_ITEM, Identifier.of("melt"), (stack, world, entity, seed) -> {
             if (entity == null)
                 return 0.0F;
             else

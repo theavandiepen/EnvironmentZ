@@ -16,11 +16,11 @@ import net.minecraft.world.chunk.WorldChunk;
 @Mixin(SpawnLocating.class)
 public class SpawnLocatingMixin {
 
-    @ModifyVariable(method = "findOverworldSpawn", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/server/world/ServerWorld;getChunk(II)Lnet/minecraft/world/chunk/WorldChunk;", ordinal = 0))
+    @ModifyVariable(method = "findOverworldSpawn", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/server/world/ServerWorld;getChunk(II)Lnet/minecraft/world/chunk/WorldChunk;", ordinal = 0),ordinal = 0)
     private static WorldChunk findOverworldSpawnMixin(WorldChunk original, ServerWorld world, int x, int z) {
         if (ConfigInit.CONFIG.easyWorldSpawn) {
-            for (int i = 0; i < 10; i++) {
-                for (int u = 0; u < 10; u++) {
+            for (int i = 0; i < 16; i++) {
+                for (int u = 0; u < 16; u++) {
                     BlockPos newSpawnPos = new BlockPos(x + 160 * i, 100, z + 160 * u);
                     if (world.getBiome(world.getTopPosition(Heightmap.Type.MOTION_BLOCKING, newSpawnPos)).isIn(TagInit.EASY_SPAWN)) {
                         return world.getChunk(ChunkSectionPos.getSectionCoord(x), ChunkSectionPos.getSectionCoord(z));

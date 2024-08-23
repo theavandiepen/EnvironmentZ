@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 @Environment(EnvType.CLIENT)
 @Mixin(InGameOverlayRenderer.class)
 public abstract class InGameOverlayRendererMixin {
-    private static final Identifier COLDNESS_OVERLAY = new Identifier("environmentz:textures/gui/coldness_overlay.png");
+    private static final Identifier COLDNESS_OVERLAY = Identifier.of("environmentz:textures/gui/coldness_overlay.png");
     private static float smoothFreezingRendering;
     private static int ticker;
 
@@ -59,7 +59,6 @@ public abstract class InGameOverlayRendererMixin {
     private static void renderWinterOverlay(MinecraftClient client, MatrixStack matrices, float smooth) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderTexture(0, COLDNESS_OVERLAY);
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         BlockPos blockPos = BlockPos.ofFloored(client.player.getX(), client.player.getEyeY(), client.player.getZ());
         float f = LightmapTextureManager.getBrightness(client.player.getWorld().getDimension(), client.player.getWorld().getLightLevel(blockPos));
         RenderSystem.enableBlend();
@@ -68,11 +67,11 @@ public abstract class InGameOverlayRendererMixin {
         float m = -client.player.getYaw() / 64.0f;
         float n = client.player.getPitch() / 64.0f;
         Matrix4f matrix4f = matrices.peek().getPositionMatrix();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferBuilder.vertex(matrix4f, -1.0f, -1.0f, -0.5f).texture(4.0f + m, 4.0f + n).next();
-        bufferBuilder.vertex(matrix4f, 1.0f, -1.0f, -0.5f).texture(0.0f + m, 4.0f + n).next();
-        bufferBuilder.vertex(matrix4f, 1.0f, 1.0f, -0.5f).texture(0.0f + m, 0.0f + n).next();
-        bufferBuilder.vertex(matrix4f, -1.0f, 1.0f, -0.5f).texture(4.0f + m, 0.0f + n).next();
+        BufferBuilder bufferBuilder =  bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.vertex(matrix4f, -1.0f, -1.0f, -0.5f).texture(4.0f + m, 4.0f + n);
+        bufferBuilder.vertex(matrix4f, 1.0f, -1.0f, -0.5f).texture(0.0f + m, 4.0f + n);
+        bufferBuilder.vertex(matrix4f, 1.0f, 1.0f, -0.5f).texture(0.0f + m, 0.0f + n);
+        bufferBuilder.vertex(matrix4f, -1.0f, 1.0f, -0.5f).texture(4.0f + m, 0.0f + n);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.disableBlend();

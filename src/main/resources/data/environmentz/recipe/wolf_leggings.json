@@ -1,7 +1,8 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "b b",
+    "bbb",
+    "a a",
     "a a"
   ],
   "key": {
@@ -13,6 +14,6 @@
     }
   },
   "result": {
-    "item": "environmentz:wolf_boots"
+    "id": "environmentz:wolf_leggings"
   }
 }

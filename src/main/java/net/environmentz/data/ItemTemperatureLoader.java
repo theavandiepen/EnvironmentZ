@@ -25,7 +25,7 @@ public class ItemTemperatureLoader implements SimpleSynchronousResourceReloadLis
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier("environmentz", "item_temperature_loader");
+        return Identifier.of("environmentz", "item_temperature_loader");
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ItemTemperatureLoader implements SimpleSynchronousResourceReloadLis
                     if (replaceList.contains(keyString)) {
                         continue;
                     }
-                    Identifier identifier = new Identifier(keyString);
+                    Identifier identifier = Identifier.of(keyString);
                     if (Registries.ITEM.get(identifier).toString().equals("air")) {
                         EnvironmentzMain.LOGGER.info("{} is not a valid item identifier", identifier);
                         continue;

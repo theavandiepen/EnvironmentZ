@@ -1,7 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "a a",
+    "aaa",
     "a a"
   ],
   "key": {
@@ -10,6 +10,6 @@
     }
   },
   "result": {
-    "item": "environmentz:wanderer_boots"
+    "id": "environmentz:wanderer_helmet"
   }
 }

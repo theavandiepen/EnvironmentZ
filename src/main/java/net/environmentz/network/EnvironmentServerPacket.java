@@ -1,61 +1,36 @@
 package net.environmentz.network;
 
-import io.netty.buffer.Unpooled;
+import net.environmentz.network.packet.AffectionPacket;
+import net.environmentz.network.packet.SyncValuesPacket;
+import net.environmentz.network.packet.TemperaturePacket;
+import net.environmentz.network.packet.ThermometerPacket;
 import net.environmentz.temperature.Temperatures;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 public class EnvironmentServerPacket {
 
-    public static final Identifier SYNC_ENV_AFFECTED = new Identifier("environmentz", "sync_env_affected");
-    public static final Identifier TEMPERATURE_UPDATE = new Identifier("environmentz", "temperature_update");
-    public static final Identifier SYNC_VALUES = new Identifier("environmentz", "sync_values");
-    public static final Identifier THERMOMETER_UPDATE = new Identifier("environmentz", "thermometer_update");
-
     public static void init() {
+        PayloadTypeRegistry.playS2C().register(AffectionPacket.PACKET_ID, AffectionPacket.PACKET_CODEC);
+        PayloadTypeRegistry.playS2C().register(TemperaturePacket.PACKET_ID, TemperaturePacket.PACKET_CODEC);
+        PayloadTypeRegistry.playS2C().register(ThermometerPacket.PACKET_ID, ThermometerPacket.PACKET_CODEC);
+        PayloadTypeRegistry.playS2C().register(SyncValuesPacket.PACKET_ID, SyncValuesPacket.PACKET_CODEC);
     }
 
     public static void writeS2CSyncEnvPacket(ServerPlayerEntity serverPlayerEntity, boolean heatAffected, boolean coldAffected) {
-        ServerPlayNetworking.send(serverPlayerEntity, SYNC_ENV_AFFECTED, new PacketByteBuf(Unpooled.buffer().writeBoolean(heatAffected).writeBoolean(coldAffected)));
+        ServerPlayNetworking.send(serverPlayerEntity, new AffectionPacket(heatAffected, coldAffected));
     }
 
     public static void writeS2CTemperaturePacket(ServerPlayerEntity serverPlayerEntity, int temperature, int wetness) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeInt(temperature);
-        buf.writeInt(wetness);
-        ServerPlayNetworking.send(serverPlayerEntity, TEMPERATURE_UPDATE, buf);
+        ServerPlayNetworking.send(serverPlayerEntity, new TemperaturePacket(temperature, wetness));
     }
 
     public static void writeS2CThermometerPacket(ServerPlayerEntity serverPlayerEntity, int temperature) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeInt(temperature);
-        ServerPlayNetworking.send(serverPlayerEntity, THERMOMETER_UPDATE, buf);
+        ServerPlayNetworking.send(serverPlayerEntity, new ThermometerPacket(temperature));
     }
 
     public static void writeS2CSyncValuesPacket(ServerPlayerEntity serverPlayerEntity) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        // body temperatures
-        buf.writeInt(Temperatures.getBodyTemperatures(0));
-        buf.writeInt(Temperatures.getBodyTemperatures(1));
-        buf.writeInt(Temperatures.getBodyTemperatures(2));
-        buf.writeInt(Temperatures.getBodyTemperatures(3));
-        buf.writeInt(Temperatures.getBodyTemperatures(4));
-        buf.writeInt(Temperatures.getBodyTemperatures(5));
-        buf.writeInt(Temperatures.getBodyTemperatures(6));
-        // water max intensity
-        buf.writeInt(Temperatures.getBodyWetness(0));
-        buf.writeInt(Temperatures.getBodyWetness(1));
-        buf.writeInt(Temperatures.getBodyWetness(2));
-        buf.writeInt(Temperatures.getBodyWetness(3));
-        buf.writeInt(Temperatures.getBodyWetness(4));
-        // thermometer temperatures
-        buf.writeInt(Temperatures.getThermometerTemperatures(0));
-        buf.writeInt(Temperatures.getThermometerTemperatures(1));
-        buf.writeInt(Temperatures.getThermometerTemperatures(2));
-        buf.writeInt(Temperatures.getThermometerTemperatures(3));
-
-        ServerPlayNetworking.send(serverPlayerEntity, SYNC_VALUES, buf);
+        ServerPlayNetworking.send(serverPlayerEntity, new SyncValuesPacket(Temperatures.getBodyTemperatures(0), Temperatures.getBodyTemperatures(1), Temperatures.getBodyTemperatures(2), Temperatures.getBodyTemperatures(3), Temperatures.getBodyTemperatures(4), Temperatures.getBodyTemperatures(5), Temperatures.getBodyTemperatures(6), Temperatures.getBodyWetness(0), Temperatures.getBodyWetness(1), Temperatures.getBodyWetness(2), Temperatures.getBodyWetness(3), Temperatures.getBodyWetness(4), Temperatures.getThermometerTemperatures(0), Temperatures.getThermometerTemperatures(1), Temperatures.getThermometerTemperatures(2), Temperatures.getThermometerTemperatures(3)));
     }
 }

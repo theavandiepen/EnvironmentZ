@@ -2,12 +2,10 @@ package net.environmentz.mixin;
 
 import com.mojang.authlib.GameProfile;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -15,7 +13,6 @@ import net.environmentz.access.PlayerEnvAccess;
 import net.environmentz.access.TemperatureManagerAccess;
 import net.environmentz.network.EnvironmentServerPacket;
 import net.environmentz.temperature.TemperatureManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -49,12 +46,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Pl
 
     @Inject(method = "Lnet/minecraft/server/network/ServerPlayerEntity;teleport(Lnet/minecraft/server/world/ServerWorld;DDDFF)V", at = @At("TAIL"))
     private void teleportMixin(ServerWorld targetWorld, double x, double y, double z, float yaw, float pitch, CallbackInfo info) {
-        compatSync();
-    }
-
-    @Nullable
-    @Inject(method = "moveToWorld", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;syncedFoodLevel:I", ordinal = 0))
-    private void moveToWorldMixin(ServerWorld destination, CallbackInfoReturnable<Entity> info) {
         compatSync();
     }
 

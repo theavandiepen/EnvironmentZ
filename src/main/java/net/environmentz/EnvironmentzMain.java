@@ -19,7 +19,7 @@ public class EnvironmentzMain implements ModInitializer {
         EffectInit.init();
         EventInit.init();
         ItemInit.init();
-        JsonReaderInit.init();
+        LoaderInit.init();
         LootInit.init();
         TagInit.init();
         EnvironmentServerPacket.init();

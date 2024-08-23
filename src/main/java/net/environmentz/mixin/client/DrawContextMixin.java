@@ -23,7 +23,7 @@ public class DrawContextMixin {
 
     @Inject(method = "Lnet/minecraft/client/gui/DrawContext;drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isItemBarVisible()Z"))
     private void drawItemInSlotMixin(TextRenderer textRenderer, ItemStack stack, int x, int y, @Nullable String countOverride, CallbackInfo info) {
-        if (stack.isIn(TagInit.ARMOR_ITEMS) && stack.hasNbt() && stack.getNbt().contains("iced")) {
+        if (stack.isIn(TagInit.ARMOR_ITEMS) && stack.get(ItemInit.ICED) != null) {
             int i = getIcedItemBarStep(stack);
             int j = getIcedItemBarColor(stack);
             int extraY = 0;
@@ -43,12 +43,12 @@ public class DrawContextMixin {
     // 0.7 is dark blue as hsv value
     // 0.5 is light blue as hsv value
     private static int getIcedItemBarColor(ItemStack stack) {
-        float f = Math.max(0.0f, 0.55f - ((float) ItemInit.COOLING_HEATING_VALUE - (float) stack.getNbt().getInt("iced")) / (float) ItemInit.COOLING_HEATING_VALUE * 0.05f);
+        float f = Math.max(0.0f, 0.55f - ((float) ItemInit.COOLING_HEATING_VALUE - (float) stack.get(ItemInit.ICED)) / (float) ItemInit.COOLING_HEATING_VALUE * 0.05f);
         return MathHelper.hsvToRgb(f, 1.0f, 1.0f);
     }
 
     private static int getIcedItemBarStep(ItemStack stack) {
-        return Math.round((float) stack.getNbt().getInt("iced") * 13.0f / (float) ItemInit.COOLING_HEATING_VALUE);
+        return Math.round((float) stack.get(ItemInit.ICED) * 13.0f / (float) ItemInit.COOLING_HEATING_VALUE);
     }
 
     @Shadow

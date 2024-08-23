@@ -1,5 +1,7 @@
 package net.environmentz.mixin.client;
 
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.entity.Entity;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -33,16 +35,14 @@ public class GameRendererMixin {
     private int ticks;
 
     @Inject(method = "renderWorld", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/util/math/MathHelper;lerp(FFF)F", ordinal = 0), locals = LocalCapture.CAPTURE_FAILSOFT)
-    private void renderWorldMixin(float tickDelta, long limitTime, MatrixStack matrices, CallbackInfo info, boolean bl, Camera camera, MatrixStack matrixStack, double d, float f) {
+    private void renderWorldMixin(RenderTickCounter tickCounter, CallbackInfo info, float f, boolean bl, Camera camera, Entity entity, float g, double d, Matrix4f matrix4f, MatrixStack matrixStack) {
         int playerTemperature = ((TemperatureManagerAccess) client.player).getTemperatureManager().getPlayerTemperature();
         // Needs further tweak
         if (ConfigInit.CONFIG.shakingScreenEffect && playerTemperature <= Temperatures.getBodyTemperatures(1) && !this.client.player.isCreative() && !this.client.player.isSpectator()) {
             if (playerTemperature == Temperatures.getBodyTemperatures(0) || this.ticks
                     % (Math.abs(Temperatures.getBodyTemperatures(0) * 2) + playerTemperature * 2) < (((Math.abs(Temperatures.getBodyTemperatures(0) * 2) + playerTemperature * 2)) / 2)) {
-                Matrix4f matrix4f = matrixStack.peek().getPositionMatrix();
                 matrix4f.translate((float) (Math.cos((double) this.ticks * Math.PI)) * 0.01f * this.client.options.getDistortionEffectScale().getValue().floatValue(), 0.0f, 0.0f);
-                // matrix4f.multiplyByTranslation((float) (Math.cos((double) this.ticks * Math.PI)) * 0.01f * this.client.options.getDistortionEffectScale().getValue().floatValue(), 0.0f, 0.0f);
-            }
+          }
         }
     }
 }
