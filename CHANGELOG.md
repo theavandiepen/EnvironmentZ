@@ -1,6 +1,6 @@
 ### Added:
 - 
 ### Fixed:
-- 
+- Fixed armor item tags
 ### Changed:
-- Updated to mc 1.21
+- 
