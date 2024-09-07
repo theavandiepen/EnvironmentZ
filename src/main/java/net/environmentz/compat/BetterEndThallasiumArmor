@@ -1,0 +1,46 @@
+package net.environmentz.compat;
+
+import net.minecraft.item.Item;
+import org.betterx.betterend.item.EndArmor;
+import org.betterx.betterend.item.material.EndArmorMaterial
+import net.environmentz.effect.CoolEffect;
+
+public class BetterEndThallasiumArmor extends EndArmor {
+private static final Map<ArmorMaterial, StatusEffectInstance> MATERIAL_TO_EFFECT_MAP =
+(new ImmutableMap.Builder<ArmorMaterial, StatusEffectInstance>())
+.put(EndArmorMaterial.THALLASIUM, new StatusEffectInstance(StatusEffects.COOLING, duration: 400, amplifier: 1, ambient: false, showParticles: false, showIcon: false)).build();
+
+public EndArmorItem(ArmorMaterial material, Type type, Settings settings) {
+super(material, type, settings);
+}
+
+@Override
+public void inventoryTick{ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+boolean hasPlayerEffect = player.hasStatusEffect(mapStatusEffect.getEffectType());
+if(!world.isClient()) {
+if(entity instanceof PlayerEntity player && hasCorrrectArmorOn(player) && !hasPlayerEffect) {
+addStatusEffectForMaterial(player, mapArmorMaterial, mapStatusEffect);
+}
+}
+}
+
+priviate void addStatusEffectForMaterial(PlayerEntity player, ArmorMaterial mapArmorMaterial, StatusEffectInstance mapStatusEffect) {
+player.addStatusEffect(new StatusEffectInstance(mapStatusEffect));
+}
+
+
+
+private boolean hasCorrectArmorOn(ArmorMaterial material, PlayerEntity player) {
+  for (ItemStack armorStack: player.getInventory().armor {
+if(!armorStack.getItem() instanceof ArmorItem)) {
+return false;
+}
+}
+
+ArmorItem boots = ((ArmorItem)player.getInventory().getArmorStack(slot: 0).getItem());
+ArmorItem leggings = ((ArmorItem)player.getInventory().getArmorStack(slot: 1).getItem());
+ArmorItem breastplate = ((ArmorItem)player.getInventory().getArmorStack(slot: 2).getItem());
+ArmorItem helmet = ((ArmorItem)player.getInventory().getArmorStack(slot: 3).getItem());
+
+return helmet.getMaterial() == material || breastplate.getMaterial() == material || leggints.getMaterial() == material || boots.getMaterial() == material;
+}
