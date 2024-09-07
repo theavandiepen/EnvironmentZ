@@ -44,3 +44,4 @@ ArmorItem helmet = ((ArmorItem)player.getInventory().getArmorStack(slot: 3).getI
 
 return helmet.getMaterial() == material || breastplate.getMaterial() == material || leggints.getMaterial() == material || boots.getMaterial() == material;
 }
+}
